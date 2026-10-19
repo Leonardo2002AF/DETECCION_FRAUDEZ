@@ -58,7 +58,7 @@ DETECCION_FRAUDEZ/
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/[TU-USUARIO]/DETECCION_FRAUDEZ.git
+git clone https://github.com/Leonardo2002AF/DETECCION_FRAUDEZ.git
 cd DETECCION_FRAUDEZ
 ```
 
