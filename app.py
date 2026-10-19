@@ -13,6 +13,299 @@ UMBRAL_DEFECTO = 0.5082  # umbral elegido con predicciones fuera de muestra (sol
 
 st.set_page_config(page_title="Detección de fraude bancario", page_icon="🛡️", layout="wide")
 
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* Fondo oscuro fijo en toda la app */
+    html, body, .stApp, .main, .block-container, section.main, header[data-testid="stHeader"] {
+        background-color: #0d1117 !important;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Fuerza texto blanco / gris claro en todos los elementos */
+    html, body, .stApp, p, span, label, h1, h2, h3, h4, h5, h6, li, td, th {
+        color: #e6edf3;
+    }
+
+    /* Tarjetas de métricas */
+    [data-testid="metric-container"], div[data-testid="stMetric"] {
+        background: #161b22 !important;
+        border: 1px solid #2563eb !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        box-shadow: 0 0 12px rgba(37, 99, 235, 0.15) !important;
+        animation: glow 3s infinite !important;
+    }
+
+    /* Valor de métrica */
+    [data-testid="stMetricValue"], [data-testid="stMetricValue"] > div {
+        color: #ffffff !important;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+    }
+
+    /* Etiqueta de métrica */
+    [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] > div, [data-testid="stMetricLabel"] label, [data-testid="stMetricLabel"] p {
+        color: #8b949e !important;
+    }
+
+    /* Dataframe */
+    [data-testid="stDataFrame"], [data-testid="stDataFrame"] > div, .stDataFrame, div[data-testid="stTable"] {
+        background: #161b22 !important;
+        background-color: #161b22 !important;
+        color: #e6edf3 !important;
+    }
+    div[data-testid="stDataFrame"] table {
+        background-color: #161b22 !important;
+        color: #e6edf3 !important;
+    }
+
+    /* Inputs, selectbox, number_input */
+    div[data-testid="stNumberInput"] input,
+    div[data-testid="stNumberInput"] > div,
+    div[data-testid="stSelectbox"] > div > div,
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="input"] > div,
+    div[data-baseweb="base-input"] > input,
+    div[data-testid="stTextInput"] input,
+    input, select {
+        background-color: #21262d !important;
+        color: #e6edf3 !important;
+        border: 1px solid #30363d !important;
+        border-radius: 8px !important;
+    }
+    div[data-baseweb="select"] * {
+        color: #e6edf3 !important;
+        background-color: #21262d !important;
+    }
+    div[data-testid="stNumberInput"] button {
+        background-color: #21262d !important;
+        color: #e6edf3 !important;
+        border-color: #30363d !important;
+    }
+
+    /* Slider */
+    div[data-testid="stSlider"], div[data-baseweb="slider"] {
+        accent-color: #2563eb !important;
+    }
+    div[data-testid="stSlider"] div[role="slider"] {
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
+    }
+
+    /* Botones de ejemplo */
+    div[data-testid="stButton"] > button,
+    .stButton > button {
+        background: #1d4ed8 !important;
+        background-color: #1d4ed8 !important;
+        color: white !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        padding: 8px 16px !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+    }
+    div[data-testid="stButton"] > button:hover,
+    .stButton > button:hover {
+        background: #2563eb !important;
+        background-color: #2563eb !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+        color: white !important;
+    }
+    div[data-testid="stButton"] > button p,
+    .stButton > button p {
+        color: white !important;
+        font-weight: 600 !important;
+    }
+
+    /* Toggle */
+    div[data-testid="stToggle"],
+    div[data-testid="stToggle"] input,
+    div[data-testid="stToggle"] label {
+        accent-color: #2563eb !important;
+    }
+    div[data-testid="stToggle"] div[aria-checked="true"],
+    div[data-testid="stToggle"] span[aria-checked="true"] {
+        background-color: #2563eb !important;
+    }
+
+    /* Pestañas activas */
+    button[data-baseweb="tab"] {
+        color: #8b949e !important;
+        background: transparent !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"],
+    div[data-testid="stTabs"] button[aria-selected="true"] {
+        color: #2563eb !important;
+        border-bottom: 2px solid #2563eb !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] p,
+    div[data-testid="stTabs"] button[aria-selected="true"] p {
+        color: #2563eb !important;
+        font-weight: 600 !important;
+    }
+
+    /* st.success */
+    div[data-testid="stAlert"]:has([data-testid="stAlertSuccessIcon"]),
+    div[data-testid="stAlert"]:has([aria-label="success"]),
+    .stAlert:has([data-testid="stAlertSuccessIcon"]) {
+        background: #0d2818 !important;
+        border: 1px solid #238636 !important;
+        border-radius: 12px !important;
+        color: #3fb950 !important;
+    }
+    div[data-testid="stAlert"]:has([data-testid="stAlertSuccessIcon"]) *,
+    .stAlert:has([data-testid="stAlertSuccessIcon"]) * {
+        color: #3fb950 !important;
+    }
+
+    /* st.error */
+    div[data-testid="stAlert"]:has([data-testid="stAlertErrorIcon"]),
+    div[data-testid="stAlert"]:has([aria-label="error"]),
+    .stAlert:has([data-testid="stAlertErrorIcon"]) {
+        background: #2d1117 !important;
+        border: 1px solid #da3633 !important;
+        border-radius: 12px !important;
+        color: #f85149 !important;
+    }
+    div[data-testid="stAlert"]:has([data-testid="stAlertErrorIcon"]) *,
+    .stAlert:has([data-testid="stAlertErrorIcon"]) * {
+        color: #f85149 !important;
+    }
+
+    /* st.divider */
+    hr, [data-testid="stDivider"], div[data-testid="stDivider"] hr {
+        border-color: #21262d !important;
+        border-top-color: #21262d !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 6px !important;
+        height: 6px !important;
+        background: #161b22 !important;
+    }
+    ::-webkit-scrollbar-track {
+        background: #161b22 !important;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #2563eb !important;
+        border-radius: 3px !important;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #1d4ed8 !important;
+    }
+
+    /* Footer text */
+    .custom-footer {
+        color: #484f58 !important;
+        font-size: 0.75rem !important;
+        text-align: center !important;
+        margin-top: 2.5rem;
+        padding: 1.2rem 0 0.5rem 0;
+        border-top: 1px solid #21262d;
+    }
+
+    /* Animaciones CSS */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.3); }
+        50% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.7); }
+    }
+
+    .main .block-container > div,
+    [data-testid="stVerticalBlock"] > div {
+        animation-name: fadeInUp;
+        animation-duration: 0.7s;
+        animation-fill-mode: both;
+    }
+
+    [data-testid="metric-container"] {
+        animation: glow 3s infinite;
+    }
+
+    /* Resultado animado */
+    .fraud-alert {
+        animation: pulse 1.5s ease-in-out infinite;
+        border-radius: 12px;
+    }
+    .safe-alert {
+        animation: slideInLeft 0.8s ease forwards;
+        border-radius: 12px;
+    }
+
+    /* Header banner */
+    .header-banner {
+        padding: 24px;
+        background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+        border-bottom: 1px solid #21262d;
+        border-radius: 12px;
+        margin-top: 8px;
+        margin-bottom: 20px;
+        animation: fadeIn 1.2s ease forwards;
+    }
+
+    .fraud-alert {
+      animation: fraudPulse 1.5s ease-in-out infinite !important;
+    }
+
+    @keyframes fraudPulse {
+      0%   { box-shadow: 0 0 0px rgba(218,54,51,0); border-color: #da3633; }
+      50%  { box-shadow: 0 0 22px 6px rgba(218,54,51,0.7); border-color: #ff6b6b; }
+      100% { box-shadow: 0 0 0px rgba(218,54,51,0); border-color: #da3633; }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+FOOTER_HTML = """
+<div class="custom-footer">
+    Caso 1 · Minería de Datos · Ing. en Sistemas de Información · UCE · 2026
+</div>
+"""
+
+SCROLL_REVEAL_SCRIPT = """
+<script>
+(function(){
+  const style = document.createElement('style');
+  style.textContent = '.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.7s ease,transform 0.7s ease} .reveal.visible{opacity:1;transform:translateY(0)}';
+  document.head.appendChild(style);
+  function check(){
+    document.querySelectorAll('[data-testid="stVerticalBlock"] > div').forEach((el,i)=>{
+      const rect = el.getBoundingClientRect();
+      if(rect.top < window.innerHeight*0.92){
+        el.classList.add('reveal','visible');
+      } else {
+        el.classList.add('reveal');
+      }
+    });
+  }
+  window.addEventListener('scroll', check, {passive:true});
+  setTimeout(check, 300);
+})();
+</script>
+"""
+
 
 # ----------------------------------------------------------------------------- modelo
 def reentrenar():
@@ -70,13 +363,27 @@ for k, v in EJEMPLOS["legitima"].items():
     st.session_state.setdefault(k, v)
 
 # ----------------------------------------------------------------------------- cabecera
-st.title("🛡️ Detección de transacciones bancarias fraudulentas")
-st.caption("Prueba de concepto · Minería de Datos · Métodos predictivos de clasificación · "
-           "Universidad Central del Ecuador")
+escudo_path = BASE / "uce_escudo.png"
+if escudo_path.exists():
+    st.image(str(escudo_path), width=80)
+
+st.title("Detección de transacciones bancarias fraudulentas")
+st.markdown(
+    """
+    <div class="header-banner">
+        <h4 style="margin: 0; color: #e6edf3; font-weight: 700;">Detección de Transacciones Bancarias Fraudulentas</h4>
+        <p style="margin: 4px 0 0 0; color: #8b949e; font-size: 0.95rem;">
+            Prueba de concepto · Minería de Datos · <strong style="color: #e6edf3;">Universidad Central del Ecuador</strong> · 2026
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 tab1, tab2, tab3 = st.tabs(["🔎 Clasificar transacción", "📊 Resultados del modelo", "ℹ️ Metodología"])
 
 # ----------------------------------------------------------------------------- pestaña 1
 with tab1:
+    st.components.v1.html(SCROLL_REVEAL_SCRIPT, height=0)
     izq, der = st.columns([3, 2], gap="large")
     with izq:
         st.subheader("Datos de la transacción")
@@ -107,11 +414,62 @@ with tab1:
     with der:
         st.subheader("Resultado")
         if prob >= umbral:
-            st.error("### 🚨 Transacción potencialmente fraudulenta")
+            st.markdown(
+                """
+                <div style="
+                    background: linear-gradient(135deg, #2d1117, #1a0a0a);
+                    border: 1px solid #da3633;
+                    border-radius: 12px;
+                    padding: 24px 28px;
+                    margin-bottom: 16px;
+                    animation: fraudPulse 1.5s ease-in-out infinite;
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    min-height: 80px;
+                ">
+                    <span style="font-size:2rem">🚨</span>
+                    <span style="color:#f85149; font-size:1.3rem; font-weight:700; line-height:1.3">
+                        Transacción potencialmente fraudulenta
+                    </span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
         else:
-            st.success("### ✅ Transacción legítima")
+            st.markdown(
+                """
+                <div style="
+                    background: linear-gradient(135deg, #0d2818, #081a10);
+                    border: 1px solid #238636;
+                    border-radius: 12px;
+                    padding: 24px 28px;
+                    margin-bottom: 16px;
+                    animation: slideInLeft 0.8s ease forwards;
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    min-height: 80px;
+                ">
+                    <span style="font-size:2rem">✅</span>
+                    <span style="color:#3fb950; font-size:1.3rem; font-weight:700; line-height:1.3">
+                        Transacción legítima
+                    </span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
         st.metric("Puntaje de riesgo del modelo", f"{prob:.1%}")
-        st.progress(min(max(prob, 0.0), 1.0))
+
+        st.markdown(
+            f"""
+            <div style="position:relative;height:28px;background:#21262d;border-radius:14px;overflow:hidden;margin:8px 0">
+              <div style="height:100%;width:{prob*100:.1f}%;background:linear-gradient(90deg,#238636,#d29922,#da3633);border-radius:14px;transition:width 0.8s ease"></div>
+              <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#e6edf3;font-weight:700;font-size:0.9rem">{prob:.1%}</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         st.caption(f"Umbral de decisión: {umbral:.4f}. El puntaje no es una probabilidad calibrada: "
                    "sirve para ordenar transacciones por riesgo.")
 
@@ -126,15 +484,27 @@ with tab1:
         except Exception:
             pass
 
+    st.markdown(FOOTER_HTML, unsafe_allow_html=True)
+
 # ----------------------------------------------------------------------------- pestaña 2
 with tab2:
-    st.subheader("Evaluación final en el conjunto de prueba (holdout)")
+    st.components.v1.html(SCROLL_REVEAL_SCRIPT, height=0)
+    st.markdown(
+        """
+        <div class="subtitle-fadein">
+            <h3 style="margin-bottom: 0.2rem; color: #e6edf3;">📊 Evaluación final en el conjunto de prueba (holdout)</h3>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.caption("6.000 transacciones no vistas durante el entrenamiento (153 fraudulentas). Modelo: "
                "Regresión Logística con class_weight='balanced', umbral 0,5082.")
     m = st.columns(5)
     for col, (n, v) in zip(m, [("AUC-ROC", "0,8552"), ("Recall", "0,7386"), ("Precision", "0,2359"),
                                ("F1-Score", "0,3576"), ("Accuracy", "0,9323")]):
         col.metric(n, v)
+
+    st.divider()
 
     g1, g2 = st.columns(2, gap="large")
     with g1:
@@ -167,6 +537,8 @@ with tab2:
         st.dataframe(cv.style.format("{:.4f}").highlight_max(axis=0, color="#1f6f4a"), width="stretch")
         st.caption("Accuracy no sirve para decidir: clasificar todo como legítimo ya daría 97,45 %.")
 
+    st.divider()
+
     st.subheader("Qué distingue al fraude en los datos (tasa de fraude por categoría, %)")
     e = st.columns(3)
     datos = {
@@ -181,20 +553,150 @@ with tab2:
             st.bar_chart(pd.Series(d, name="Tasa de fraude (%)"))
     st.caption("Tasa global de fraude: 2,55 %. Además, el fraude se concentra en la madrugada (≈35 % a las 0 h).")
 
+    st.markdown(FOOTER_HTML, unsafe_allow_html=True)
+
 # ----------------------------------------------------------------------------- pestaña 3
 with tab3:
+    st.components.v1.html(SCROLL_REVEAL_SCRIPT, height=0)
     st.subheader("Metodología")
-    st.markdown("""
-1. **Datos:** 30.090 transacciones sintéticas con las 13 variables del diccionario del caso; tras eliminar 90 duplicados, 30.000. Desbalance: 2,55 % de fraude.
-2. **EDA:** valores faltantes (<2 %), duplicados, distribuciones, valores atípicos (se conservan: son señal de fraude) y análisis de fraude por variable.
-3. **Preparación sin fuga de datos:** división estratificada 80/20 **antes** de cualquier ajuste; imputación, escalado y One-Hot dentro de un `Pipeline` que se ajusta solo con entrenamiento.
-4. **Desbalance:** `class_weight="balanced"` como estrategia principal; SMOTE (dentro del pipeline) como alternativa. No mejoró.
-5. **Modelos y validación:** Regresión Logística, Árbol de Decisión y Random Forest con validación cruzada estratificada de 5 folds.
-6. **Selección:** umbral elegido con predicciones fuera de muestra (solo entrenamiento) exigiendo Recall ≥ 0,80; ganó la Regresión Logística por desempate (más simple y explicable).
-7. **Evaluación final:** una sola vez sobre el conjunto de prueba, con intervalos de confianza por bootstrap (Recall 95 %: 0,67–0,80).
-""")
-    st.warning("**Limitaciones:** el dataset es **sintético** (las relaciones las define un generador), "
-               "solo hay 153 fraudes en el conjunto de prueba, la Precision es baja (≈ 3 falsas alarmas por cada "
-               "fraude detectado) y el puntaje no es una probabilidad calibrada. Es una prueba de concepto: en un "
-               "sistema real debe apoyar —no reemplazar— la revisión humana.")
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        st.markdown(
+            """
+            <div class="method-card" style="
+              background:#161b22;
+              border:1px solid #21262d;
+              border-left:4px solid #2563eb;
+              border-radius:12px;
+              padding:20px 24px;
+              margin-bottom:16px;
+              animation: fadeInUp 0.6s ease 0.0s both;
+              min-height:160px;
+            ">
+              <div style="font-size:2rem;margin-bottom:8px">📦</div>
+              <div style="color:#e6edf3;font-weight:700;font-size:1rem;margin-bottom:6px">Datos</div>
+              <div style="color:#8b949e;font-size:0.875rem;line-height:1.6">30.090 transacciones sintéticas con 13 variables. Tras eliminar 90 duplicados quedan 30.000. Desbalance: 2,55 % de fraude (769 casos).</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            """
+            <div class="method-card" style="
+              background:#161b22;
+              border:1px solid #21262d;
+              border-left:4px solid #d29922;
+              border-radius:12px;
+              padding:20px 24px;
+              margin-bottom:16px;
+              animation: fadeInUp 0.6s ease 0.2s both;
+              min-height:160px;
+            ">
+              <div style="font-size:2rem;margin-bottom:8px">⚙️</div>
+              <div style="color:#e6edf3;font-weight:700;font-size:1rem;margin-bottom:6px">Preparación sin fuga de datos</div>
+              <div style="color:#8b949e;font-size:0.875rem;line-height:1.6">División estratificada 80/20 antes de cualquier ajuste. Imputación, escalado y One-Hot dentro de un Pipeline ajustado solo con entrenamiento.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            """
+            <div class="method-card" style="
+              background:#161b22;
+              border:1px solid #21262d;
+              border-left:4px solid #ec4899;
+              border-radius:12px;
+              padding:20px 24px;
+              margin-bottom:16px;
+              animation: fadeInUp 0.6s ease 0.4s both;
+              min-height:160px;
+            ">
+              <div style="font-size:2rem;margin-bottom:8px">🤖</div>
+              <div style="color:#e6edf3;font-weight:700;font-size:1rem;margin-bottom:6px">Modelos evaluados</div>
+              <div style="color:#8b949e;font-size:0.875rem;line-height:1.6">Regresión Logística, Árbol de Decisión y Random Forest con validación cruzada estratificada de 5 folds y métricas AUC-ROC, Recall, Precision, F1.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with col2:
+        st.markdown(
+            """
+            <div class="method-card" style="
+              background:#161b22;
+              border:1px solid #21262d;
+              border-left:4px solid #238636;
+              border-radius:12px;
+              padding:20px 24px;
+              margin-bottom:16px;
+              animation: fadeInUp 0.6s ease 0.1s both;
+              min-height:160px;
+            ">
+              <div style="font-size:2rem;margin-bottom:8px">🔍</div>
+              <div style="color:#e6edf3;font-weight:700;font-size:1rem;margin-bottom:6px">Análisis exploratorio (EDA)</div>
+              <div style="color:#8b949e;font-size:0.875rem;line-height:1.6">Valores faltantes (&lt;2 %), duplicados, distribuciones, valores atípicos conservados (son señal de fraude) y tasas de fraude por variable.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            """
+            <div class="method-card" style="
+              background:#161b22;
+              border:1px solid #21262d;
+              border-left:4px solid #8b5cf6;
+              border-radius:12px;
+              padding:20px 24px;
+              margin-bottom:16px;
+              animation: fadeInUp 0.6s ease 0.3s both;
+              min-height:160px;
+            ">
+              <div style="font-size:2rem;margin-bottom:8px">⚖️</div>
+              <div style="color:#e6edf3;font-weight:700;font-size:1rem;margin-bottom:6px">Tratamiento del desbalance</div>
+              <div style="color:#8b949e;font-size:0.875rem;line-height:1.6">class_weight='balanced' como estrategia principal. SMOTE como alternativa dentro del pipeline. SMOTE no mejoró y se descartó.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            """
+            <div class="method-card" style="
+              background:#161b22;
+              border:1px solid #21262d;
+              border-left:4px solid #14b8a6;
+              border-radius:12px;
+              padding:20px 24px;
+              margin-bottom:16px;
+              animation: fadeInUp 0.6s ease 0.5s both;
+              min-height:160px;
+            ">
+              <div style="font-size:2rem;margin-bottom:8px">🎯</div>
+              <div style="color:#e6edf3;font-weight:700;font-size:1rem;margin-bottom:6px">Selección del modelo final</div>
+              <div style="color:#8b949e;font-size:0.875rem;line-height:1.6">Umbral elegido con predicciones fuera de muestra (solo entrenamiento) exigiendo Recall ≥ 0,80. Ganó Regresión Logística por desempate: más simple y explicable.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown(
+        """
+        <div class="method-card" style="
+          background:#161b22;
+          border:1px solid #21262d;
+          border-left:4px solid #da3633;
+          border-radius:12px;
+          padding:20px 24px;
+          margin-bottom:16px;
+          animation: fadeInUp 0.6s ease 0.6s both;
+          min-height:160px;
+        ">
+          <div style="font-size:2rem;margin-bottom:8px">⚠️</div>
+          <div style="color:#e6edf3;font-weight:700;font-size:1rem;margin-bottom:6px">Limitaciones</div>
+          <div style="color:#8b949e;font-size:0.875rem;line-height:1.6">Dataset sintético · Solo 153 fraudes en prueba · Precision baja (≈3 falsas alarmas por fraude) · Puntaje no calibrado · Es una prueba de concepto: debe apoyar, no reemplazar, la revisión humana.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.caption(f"Modelo cargado desde: {origen_modelo}")
+    st.markdown(FOOTER_HTML, unsafe_allow_html=True)
